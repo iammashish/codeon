@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codeon — AI Coding Studio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Slide-out Drawer Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <span class="brand-cube">◈</span>
+          <span class="brand-name">Codeon</span>
+        </div>
+        <button class="icon-btn" id="closeSidebarBtn" title="Close">✕</button>
+      </div>
+
+      <button class="new-chat-btn" id="newChatBtn">
+        <span>＋</span> New Coding Session
+      </button>
+
+      <div class="section-label">HISTORY</div>
+      <div class="chat-list" id="chatList"></div>
+
+      <div class="sidebar-footer">
+        <button class="ghost-btn" id="openMemoryBtn">
+          <span>◇</span> Smart Coding Memory
+        </button>
+        <div class="user-card">
+          <div class="user-meta">
+            <span class="user-name" id="userName">Guest Coder</span>
+            <span class="user-quota" id="userQuota">20 msgs left today</span>
+          </div>
+          <button class="auth-btn" id="authBtn">Sign In</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
+
+    <!-- Main Screen with Dynamic Top Aura -->
+    <main class="workspace mode-home" id="workspace">
+      <div class="top-aura"></div>
+
+      <!-- Minimal Floating Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn" id="openSidebarBtn" title="Sessions">☰</button>
+          <span class="workspace-title" id="currentChatTitle"></span>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="themeToggleBtn" title="Toggle Theme">◐</button>
+          <button class="avatar-btn" id="topAvatarBtn" title="Account">
+            <span id="avatarInitial">C</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Feed -->
+      <section class="messages-area" id="messagesArea">
+        <!-- Home Hero + Bento Grid -->
+        <div class="home-stage" id="welcomeScreen">
+          <div class="hero-greeting">
+            <h1>Hello <span class="accent-name" id="heroUserName">Coder</span><br />What shall we build?</h1>
+          </div>
+
+          <div class="bento-section">
+            <div class="bento-brand">
+              <span class="brand-cube">◈</span>
+              <span>Codeon Engine</span>
+            </div>
+
+            <div class="bento-grid">
+              <!-- Tall Left Feature Card -->
+              <button class="bento-card bento-tall starter-chip" data-prompt="Build a complete, responsive single-file HTML/CSS/JS glassmorphism portfolio card with interactive hover glow.">
+                <span class="bento-text">Build a sleek glassmorphism web component with live preview</span>
+                <span class="bento-icon">▣</span>
+              </button>
+
+              <!-- Right Stacked Column -->
+              <div class="bento-right">
+                <button class="bento-card bento-mid starter-chip" data-prompt="Help me debug and optimize my code for better speed and clean structure.">
+                  <span class="bento-text">Debug &amp; Optimize Code</span>
+                  <span class="bento-icon">△</span>
+                </button>
+
+                <div class="bento-dock">
+                  <button type="button" class="dock-action starter-chip" data-prompt="Write a clean Python algorithm with time and space complexity explained." title="Algorithms">
+                    <span>◇</span>
+                  </button>
+                  <button type="button" class="dock-action" id="quickSandboxBtn" title="Open Live Sandbox">
+                    <span>▶</span>
+                  </button>
+                  <button type="button" class="dock-action" id="quickMemoryBtn" title="Smart Memory">
+                    <span>✦</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Rounded Prompt Container -->
+      <footer class="composer-wrap">
+        <form class="composer" id="chatForm">
+          <textarea
+            id="promptInput"
+            rows="2"
+            placeholder="Ask Codeon to write, debug, or build..."
+            required
+          ></textarea>
+          <div class="composer-bar">
+            <div class="composer-tools">
+              <button type="button" class="tool-icon" id="clearPromptBtn" title="Clear">⌫</button>
+              <button type="button" class="tool-icon" id="insertSnippetBtn" title="Insert Code Tag">{ }</button>
+            </div>
+            <button type="submit" class="send-btn" id="sendBtn" title="Send">▲</button>
+          </div>
+        </form>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Smart Memory Modal -->
+  <div class="modal-backdrop hidden" id="memoryModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>◇ Smart Coding Memory</span>
+        <button class="icon-btn" id="closeMemoryBtn">✕</button>
+      </div>
+      <p class="modal-desc">Save your preferred tech stack or coding rules so Codeon remembers them automatically.</p>
+      <textarea id="memoryInput" rows="5" placeholder="e.g. Use clean modern JavaScript, modular functions, and dark UI themes..."></textarea>
+      <div class="modal-actions">
+        <button class="new-chat-btn" id="saveMemoryBtn">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sandboxed Live Preview Modal -->
+  <div class="modal-backdrop hidden" id="previewModal">
+    <div class="preview-card">
+      <div class="modal-header">
+        <span>▣ Sandboxed Live Runner</span>
+        <button class="icon-btn" id="closePreviewBtn">✕</button>
+      </div>
+      <iframe id="sandboxFrame" sandbox="allow-scripts" title="Live Code Sandbox"></iframe>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
